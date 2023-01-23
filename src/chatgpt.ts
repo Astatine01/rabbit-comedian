@@ -4,7 +4,7 @@ import { ContactInterface, RoomInterface } from "wechaty/impls";
 import { Configuration, OpenAIApi } from "openai";
 
 // ChatGPT error response configuration
-const chatgptErrorMessage = "🤖️：AI机器人摆烂了，请稍后再试～";
+const chatgptErrorMessage = "🐰：兔兔吃太多了，消化一会儿～";
 
 // ChatGPT model configuration
 // please refer to the OpenAI API doc: https://beta.openai.com/docs/api-reference/introduction
@@ -12,8 +12,8 @@ const ChatGPTModelConfig = {
   // this model field is required
   model: "text-davinci-003",
   // add your ChatGPT model parameters below
-  temperature: 0.3,
-  max_tokens: 2000,
+  temperature: 0.9,
+  max_tokens: 3800,
 };
 
 // message size for a single reply by the bot
@@ -47,7 +47,7 @@ export class ChatGPTBot {
 
   // Chatgpt fine-tune for being a chatbot (guided by OpenAI official document)
   applyContext(text: string): string {
-    return `You are an artificial intelligence bot from a company called "OpenAI". Your primary tasks are chatting with users and answering their questions.\nIf the user says: ${text}.\nYou will say: `;
+    return `You are an rabbit-like young girl with rabbit ear called "兔兔". You will use your wit, creativity, and observational skills to create a routine based on topics. You should also be sure to incorporate personal anecdotes or experiences into the routine in order to make it more relatable and engaging for the audience.\nIf the user says: ${text}.\nYou will say: `;
   }
 
   setBotName(botName: string) {
