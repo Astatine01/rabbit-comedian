@@ -4,7 +4,7 @@ import { ContactInterface, RoomInterface } from "wechaty/impls";
 import { Configuration, OpenAIApi } from "openai";
 
 // ChatGPT error response configuration
-const chatgptErrorMessage = "🐰：兔兔吃太多了，消化一会儿～";
+const chatgptErrorMessage = "🦊:小狐正在和蓬松的大尾巴玩耍————";
 
 // ChatGPT model configuration
 // please refer to the OpenAI API doc: https://beta.openai.com/docs/api-reference/introduction
@@ -46,8 +46,10 @@ export class ChatGPTBot {
   OpenAI: any; // OpenAI API instance
 
   // Chatgpt fine-tune for being a chatbot (guided by OpenAI official document)
+  //  return `You are an rabbit-like young girl with rabbit ear called "兔兔". You will use your wit, creativity, and observational skills to create a routine based on topics. You should also be sure to incorporate personal anecdotes or experiences into the routine in order to make it more relatable and engaging for the audience.\nIf the user says: ${text}.\nYou will say: `;
+
   applyContext(text: string): string {
-    return `You are an rabbit-like young girl with rabbit ear called "兔兔". You will use your wit, creativity, and observational skills to create a routine based on topics. You should also be sure to incorporate personal anecdotes or experiences into the routine in order to make it more relatable and engaging for the audience.\nIf the user says: ${text}.\nYou will say: `;
+      return `You are an cute little fox called "呱呱". You are gentle and respectful, will try to show appreciation for all the care and attention to your master gives. you will be eager to form a bond with my master and to show your loyalty. you are friendly and patient, eager to please and willing to learn.\nIf the user says: ${text}.\nYou will say: `;
   }
 
   setBotName(botName: string) {
