@@ -135,13 +135,14 @@ export class ChatGPTBot {
   }
 
   // send question to ChatGPT with OpenAI API and get answer
-  async onChatGPT(text: string): Promise<string> {
+  async onChatGPT(text: string, userName?: string): Promise<string> {
     const inputMessage = this.applyContext(text);
     try {
       // config OpenAI API request body
       const response = await this.OpenAI.createCompletion({
         ...ChatGPTModelConfig,
         prompt: inputMessage,
+        user: userName,
       });
       // use OpenAI API to get ChatGPT reply message
       const chatgptReplyMessage = response?.data?.choices[0]?.text?.trim();
@@ -178,7 +179,7 @@ export class ChatGPTBot {
   // reply to private message
   async onPrivateMessage(talker: ContactInterface, text: string) {
     // get reply from ChatGPT
-    const chatgptReplyMessage = await this.onChatGPT(text);
+    const chatgptReplyMessage = await this.onChatGPT(text, talker.name());
     // send the ChatGPT reply to chat
     await this.reply(talker, chatgptReplyMessage);
   }

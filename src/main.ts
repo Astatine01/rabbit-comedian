@@ -34,7 +34,7 @@ async function main() {
         if (message.text().startsWith("Hello")) {
           await message.say("World!");
           return;
-        }
+        } 
         // handle message for chatGPT bot
         await chatGPTBot.onMessage(message);
       } catch (e) {
