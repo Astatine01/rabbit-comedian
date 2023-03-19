@@ -10,10 +10,10 @@ const chatgptErrorMessage = "🦊:小狐正在和蓬松的大尾巴玩耍——�
 // please refer to the OpenAI API doc: https://beta.openai.com/docs/api-reference/introduction
 const ChatGPTModelConfig = {
   // this model field is required
-  model: "text-davinci-003",
+  model: "gpt-4",
   // add your ChatGPT model parameters below
   temperature: 0.9,
-  max_tokens: 3700,
+  max_tokens: 7000,
 };
 
 // message size for a single reply by the bot
