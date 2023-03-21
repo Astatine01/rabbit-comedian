@@ -58,16 +58,16 @@ export function ajax(config : HttpConfig){
   }
 }
 
-function hashcode(str:string|undefined): any {
+function hashcode(str:string|undefined): string|undefined {
   if(str == undefined || str == null) return undefined;
   var hash = 0, i, chr, len;
-  if (str.length === 0) return hash;
+  if (str.length === 0) return "q_"+hash;
   for (i = 0, len = str.length; i < len; i++) {
    chr  = str.charCodeAt(i);
    hash = ((hash << 5) - hash) + chr;
    hash |= 0; // Convert to 32bit integer
   }
-  return hash;
+  return "q_"+hash;
  }
 
 export class ChatGPTBot {
