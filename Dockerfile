@@ -7,7 +7,7 @@ RUN apt-get update && \
     rm -rf /var/cache/apk/* && \
     pip3 install --no-cache-dir poetry && \
     rm -rf ~/.cache/ &&\
-    echo fs.inotify.max_user_watches=582222 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
+    echo fs.inotify.max_user_watches=582222 | tee -a /etc/sysctl.conf && sysctl -p 
 COPY package*.json ./
 COPY pyproject.toml ./
 COPY poetry.lock ./
