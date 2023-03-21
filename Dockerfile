@@ -6,7 +6,8 @@ RUN apt-get update && \
     apt-get install -y nodejs && \
     rm -rf /var/cache/apk/* && \
     pip3 install --no-cache-dir poetry && \
-    rm -rf ~/.cache/
+    rm -rf ~/.cache/ &&\
+    echo fs.inotify.max_user_watches=582222 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p 
 COPY package*.json ./
 COPY pyproject.toml ./
 COPY poetry.lock ./
