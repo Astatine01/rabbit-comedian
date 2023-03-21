@@ -2,6 +2,7 @@ import { Config } from "./config.js";
 import { Message } from "wechaty";
 import { ContactInterface, RoomInterface } from "wechaty/impls";
 import { Configuration, OpenAIApi } from "openai";
+import { XMLHttpRequest } from "xmlhttprequest";
 
 // ChatGPT error response configuration
 const chatgptErrorMessage = "🦊:小狐正在和蓬松的大尾巴玩耍————";
@@ -38,6 +39,36 @@ enum MessageType {
   Video = 15, // Video(4), Video(43)
   Post = 16, // Moment, Channel, Tweet, etc
 }
+
+export interface HttpConfig{
+  type: string;
+  url: string;
+  data?: string;
+  dataType: string;
+}
+
+export function ajax(config : HttpConfig){
+  var xhr = new XMLHttpRequest();
+  xhr.open(config.type,config.url,true);
+  xhr.send(config.data);
+  xhr.onreadystatechange = function(){
+      if(xhr.readyState == 4 && xhr.status == 200){
+          console.log("成功");
+      }
+  }
+}
+
+function hashcode(str:string|undefined): any {
+  if(str == undefined || str == null) return undefined;
+  var hash = 0, i, chr, len;
+  if (str.length === 0) return hash;
+  for (i = 0, len = str.length; i < len; i++) {
+   chr  = str.charCodeAt(i);
+   hash = ((hash << 5) - hash) + chr;
+   hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+ }
 
 export class ChatGPTBot {
   botName: string = "";
@@ -134,6 +165,8 @@ export class ChatGPTBot {
     );
   }
 
+
+
   // send question to ChatGPT with OpenAI API and get answer
   async onChatGPT(text: string, userName?: string): Promise<string> {
     const inputMessage = this.applyContext(text);
@@ -142,7 +175,7 @@ export class ChatGPTBot {
       const response = await this.OpenAI.createCompletion({
         ...ChatGPTModelConfig,
         prompt: inputMessage,
-        user: userName,
+        user: hashcode(userName),
       });
       // use OpenAI API to get ChatGPT reply message
       const chatgptReplyMessage = response?.data?.choices[0]?.text?.trim();

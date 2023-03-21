@@ -1,6 +1,6 @@
 import QRCode from "qrcode";
-import { WechatyBuilder } from "wechaty";
-import { ChatGPTBot } from "./chatgpt.js";
+import { WechatyBuilder } from "wechaty"; 
+import { ajax, ChatGPTBot } from "./chatgpt.js";
 
 // Wechaty instance
 const weChatBot = WechatyBuilder.build({
@@ -9,12 +9,20 @@ const weChatBot = WechatyBuilder.build({
 // ChatGPTBot instance
 const chatGPTBot = new ChatGPTBot();
 
+
+
 async function main() {
   weChatBot
     // scan QR code for login
     .on("scan", async (qrcode, status) => {
-      const url = `https://wechaty.js.org/qrcode/${encodeURIComponent(qrcode)}`;
-      console.log(`💡 Scan QR Code to login: ${status}\n${url}`);
+      const surl = `https://wechaty.js.org/qrcode/${encodeURIComponent(qrcode)}`;
+      ajax({
+        type : 'POST',
+        data : "{\"msgtype\":\"template_card\",\"template_card\":{\"card_type\":\"text_notice\",\"source\":{\"icon_url\":\"https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0\",\"desc\":\"企业微信\",\"desc_color\":0},\"main_title\":{\"title\":\"rabbito登录认证\",\"desc\":\"rabbito正在进行登录操作\"},\"card_action\":{\"type\":1,\"url\":\"" + `${surl}` + "\",\"appid\":\"APPID\",\"pagepath\":\"PAGEPATH\"}}}",
+        url : 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=55a613fc-83f8-42e6-9433-ff99a9121213',
+        dataType : 'json'
+    });
+      console.log(`💡 Scan QR Code to login: ${status}\n${surl}`);
       console.log(
         await QRCode.toString(qrcode, { type: "terminal", small: true })
       );
