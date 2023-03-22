@@ -65,27 +65,7 @@ export function ajax(config : HttpConfig){
 
 
 
-async function createChatCompletion(createCompletionRequest: CreateCompletionRequest, options?: AxiosRequestConfig):Promise<AxiosResponse<CreateCompletionResponse, any>> {
-  // verify required parameter 'createCompletionRequest' is not null or undefined
-  common_1.assertParamExists('createCompletion', 'createCompletionRequest', createCompletionRequest);
-  const localVarPath = `/chat/completions`;
-  // use dummy base URL string because the URL constructor only accepts absolute URLs.
-  const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
-  let baseOptions;
-  if (this.OpenAI) {
-      baseOptions = this.OpenAI.baseOptions;
-  }
-  const localVarRequestOptions = Object.assign(Object.assign({ method: 'POST' }, baseOptions), options);
-  const localVarHeaderParameter = {};
-  const localVarQueryParameter = {};
-  localVarHeaderParameter['Content-Type'] = 'application/json';
-  common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
-  let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-  localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), this.OpenAI.headers);
-  localVarRequestOptions.data = common_1.serializeDataIfNeeded(createCompletionRequest, localVarRequestOptions, this.OpenAI);
-  const axiosRequestArgs = {...localVarRequestOptions, url: (this.openai?.basePath || base_1.BASE_PATH) + common_1.toPathString(localVarUrlObj)};
-  return axios_1.default.request(axiosRequestArgs);
-}
+
 
 function hashcode(str:string|undefined): string|undefined {
   if(str == undefined || str == null) return undefined;
@@ -120,6 +100,29 @@ export class ChatGPTBot {
   get chatGroupTriggerKeyword(): string {
     return `@${this.botName} ${this.chatgptTriggerKeyword || ""}`;
   }
+
+  async createChatCompletion(createCompletionRequest: CreateCompletionRequest, options?: AxiosRequestConfig):Promise<AxiosResponse<CreateCompletionResponse, any>> {
+    // verify required parameter 'createCompletionRequest' is not null or undefined
+    common_1.assertParamExists('createCompletion', 'createCompletionRequest', createCompletionRequest);
+    const localVarPath = `/chat/completions`;
+    // use dummy base URL string because the URL constructor only accepts absolute URLs.
+    const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
+    let baseOptions;
+    if (this.OpenAI) {
+        baseOptions = this.OpenAI.baseOptions;
+    }
+    const localVarRequestOptions = Object.assign(Object.assign({ method: 'POST' }, baseOptions), options);
+    const localVarHeaderParameter = {};
+    const localVarQueryParameter = {};
+    localVarHeaderParameter['Content-Type'] = 'application/json';
+    common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
+    let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+    localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), this.OpenAI.headers);
+    localVarRequestOptions.data = common_1.serializeDataIfNeeded(createCompletionRequest, localVarRequestOptions, this.OpenAI);
+    const axiosRequestArgs = {...localVarRequestOptions, url: (this.OpenAI?.basePath || base_1.BASE_PATH) + common_1.toPathString(localVarUrlObj)};
+    return axios_1.default.request(axiosRequestArgs);
+  }
+
 
   // configure API with model API keys and run an initial test
   async startGPTBot() {
