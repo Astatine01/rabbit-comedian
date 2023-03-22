@@ -112,7 +112,7 @@ export class ChatGPTBot {
         baseOptions = this.OpenAI.baseOptions;
     }
     const localVarRequestOptions = Object.assign(Object.assign({ method: 'POST' }, baseOptions), options);
-    const localVarHeaderParameter = {};
+    const localVarHeaderParameter :{[index: string]:any}= {};
     const localVarQueryParameter = {};
     localVarHeaderParameter['Content-Type'] = 'application/json';
     common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -204,7 +204,7 @@ export class ChatGPTBot {
     const inputMessage = this.applyContext(text);
     try {
       // config OpenAI API request body
-      const response = await createChatCompletion({
+      const response = await this.createChatCompletion({
         ...ChatGPTModelConfig,
         prompt: inputMessage,
         user: hashcode(userName),
