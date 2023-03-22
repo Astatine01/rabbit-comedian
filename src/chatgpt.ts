@@ -173,8 +173,8 @@ export class ChatGPTBot {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bear '+ this.OpenAIConfig.apiKey,
-      'OpenAI-Organization' : ''+this.OpenAIConfig.organization,
+      'Authorization': 'Bear '+ Config.openaiApiKey,
+      'OpenAI-Organization' : ''+Config.openaiOrganizationID,
     },
     data: createCompletionRequest
   });
