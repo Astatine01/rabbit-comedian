@@ -1,7 +1,12 @@
 import { Config } from "./config.js";
 import { Message } from "wechaty";
 import { ContactInterface, RoomInterface } from "wechaty/impls";
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi,CreateCompletionRequest,CreateCompletionResponse } from "openai";
+import {AxiosRequestConfig} from "axios";
+import * as common_1 from "openai/common";
+import {AxiosPromise,AxiosResponse} from "openai/node_modules/axios";
+import * as axios_1 from "openai/node_modules/axios/index";
+import base_1 from "openai/dist/base";
 import { XMLHttpRequest } from "xmlhttprequest";
 
 // ChatGPT error response configuration
@@ -56,6 +61,30 @@ export function ajax(config : HttpConfig){
           console.log("成功");
       }
   }
+}
+
+
+
+async function createChatCompletion(createCompletionRequest: CreateCompletionRequest, options?: AxiosRequestConfig):Promise<AxiosResponse<CreateCompletionResponse, any>> {
+  // verify required parameter 'createCompletionRequest' is not null or undefined
+  common_1.assertParamExists('createCompletion', 'createCompletionRequest', createCompletionRequest);
+  const localVarPath = `/chat/completions`;
+  // use dummy base URL string because the URL constructor only accepts absolute URLs.
+  const localVarUrlObj = new URL(localVarPath, common_1.DUMMY_BASE_URL);
+  let baseOptions;
+  if (this.OpenAI) {
+      baseOptions = this.OpenAI.baseOptions;
+  }
+  const localVarRequestOptions = Object.assign(Object.assign({ method: 'POST' }, baseOptions), options);
+  const localVarHeaderParameter = {};
+  const localVarQueryParameter = {};
+  localVarHeaderParameter['Content-Type'] = 'application/json';
+  common_1.setSearchParams(localVarUrlObj, localVarQueryParameter);
+  let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+  localVarRequestOptions.headers = Object.assign(Object.assign(Object.assign({}, localVarHeaderParameter), headersFromBaseOptions), this.OpenAI.headers);
+  localVarRequestOptions.data = common_1.serializeDataIfNeeded(createCompletionRequest, localVarRequestOptions, this.OpenAI);
+  const axiosRequestArgs = {...localVarRequestOptions, url: (this.openai?.basePath || base_1.BASE_PATH) + common_1.toPathString(localVarUrlObj)};
+  return axios_1.default.request(axiosRequestArgs);
 }
 
 function hashcode(str:string|undefined): string|undefined {
@@ -172,7 +201,7 @@ export class ChatGPTBot {
     const inputMessage = this.applyContext(text);
     try {
       // config OpenAI API request body
-      const response = await this.OpenAI.createCompletion({
+      const response = await createChatCompletion({
         ...ChatGPTModelConfig,
         prompt: inputMessage,
         user: hashcode(userName),
@@ -180,7 +209,7 @@ export class ChatGPTBot {
       // use OpenAI API to get ChatGPT reply message
       const chatgptReplyMessage = response?.data?.choices[0]?.text?.trim();
       console.log("🤖️ Chatbot says: ", chatgptReplyMessage);
-      return chatgptReplyMessage;
+      return chatgptReplyMessage == undefined?"":chatgptReplyMessage;
     } catch (e: any) {
       const errorResponse = e?.response;
       const errorCode = errorResponse?.status;
