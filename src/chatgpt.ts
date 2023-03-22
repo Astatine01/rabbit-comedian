@@ -1,8 +1,10 @@
 import { Config } from "./config.js";
 import { Message } from "wechaty";
 import { ContactInterface, RoomInterface } from "wechaty/impls";
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi,CreateCompletionRequest,CreateCompletionResponse } from "openai";
 import { XMLHttpRequest } from "xmlhttprequest";
+import axios from "axios";
+import {AxiosResponse} from "axios";
 
 // ChatGPT error response configuration
 const chatgptErrorMessage = "🦊:小狐正在和蓬松的大尾巴玩耍————";
@@ -11,7 +13,7 @@ const chatgptErrorMessage = "🦊:小狐正在和蓬松的大尾巴玩耍——�
 // please refer to the OpenAI API doc: https://beta.openai.com/docs/api-reference/introduction
 const ChatGPTModelConfig = {
   // this model field is required
-  model: "text-davinci-003",
+  model: "gpt-3.5-turbo",
   // add your ChatGPT model parameters below
   temperature: 0.9,
   max_tokens: 3000,
@@ -165,6 +167,18 @@ export class ChatGPTBot {
     );
   }
 
+ async createChatCompletion(createCompletionRequest: CreateCompletionRequest): Promise<AxiosResponse<CreateCompletionResponse, any>>{
+  return axios({
+    url: 'https://api.openai.com/v1/chat/completions',
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bear '+ this.OpenAIConfig.apiKey,
+      'OpenAI-Organization' : ''+this.OpenAIConfig.organization,
+    },
+    data: createCompletionRequest
+  });
+ }
 
 
   // send question to ChatGPT with OpenAI API and get answer
@@ -172,7 +186,7 @@ export class ChatGPTBot {
     const inputMessage = this.applyContext(text);
     try {
       // config OpenAI API request body
-      const response = await this.OpenAI.createCompletion({
+      const response = await this.createChatCompletion({
         ...ChatGPTModelConfig,
         prompt: inputMessage,
         user: hashcode(userName),
@@ -180,7 +194,7 @@ export class ChatGPTBot {
       // use OpenAI API to get ChatGPT reply message
       const chatgptReplyMessage = response?.data?.choices[0]?.text?.trim();
       console.log("🤖️ Chatbot says: ", chatgptReplyMessage);
-      return chatgptReplyMessage;
+      return chatgptReplyMessage==undefined?"":chatgptReplyMessage;
     } catch (e: any) {
       const errorResponse = e?.response;
       const errorCode = errorResponse?.status;
