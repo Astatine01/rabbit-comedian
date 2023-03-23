@@ -167,7 +167,7 @@ export class ChatGPTBot {
     );
   }
 
- async createChatCompletion(createCompletionRequest: CreateCompletionRequest): Promise<AxiosResponse<CreateCompletionResponse, any>>{
+ async createChatCompletion(req: CreateCompletionRequest): Promise<AxiosResponse<CreateCompletionResponse, any>>{
   return axios({
     url: 'https://api.openai.com/v1/chat/completions',
     method: 'post',
@@ -176,7 +176,18 @@ export class ChatGPTBot {
       'Authorization': 'Bearer '+ Config.openaiApiKey,
       'OpenAI-Organization' : ''+Config.openaiOrganizationID,
     },
-    data: createCompletionRequest
+    data: {
+      'model': req.model,
+      'messages': [
+        {
+          'role':'user',
+          'content': req.prompt
+        }
+      ],
+      'temperature': req.temperature,
+      'max_tokens': req.max_tokens,
+      'user':req.user
+    }
   });
  }
 
