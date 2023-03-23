@@ -203,6 +203,7 @@ export class ChatGPTBot {
         user: hashcode(userName),
       });
       // use OpenAI API to get ChatGPT reply message
+      console.log("🤖️ Chatbot says json: ", JSON.stringify(response));
       const chatgptReplyMessage = response?.data?.choices[0]?.text?.trim();
       console.log("🤖️ Chatbot says: ", chatgptReplyMessage);
       return chatgptReplyMessage==undefined?"":chatgptReplyMessage;
