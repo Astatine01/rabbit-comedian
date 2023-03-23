@@ -173,7 +173,7 @@ export class ChatGPTBot {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bear '+ Config.openaiApiKey,
+      'Authorization': 'Bearer '+ Config.openaiApiKey,
       'OpenAI-Organization' : ''+Config.openaiOrganizationID,
     },
     data: createCompletionRequest
