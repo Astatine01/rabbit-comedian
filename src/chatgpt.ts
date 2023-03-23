@@ -60,6 +60,19 @@ export function ajax(config : HttpConfig){
   }
 }
 
+interface CreateChatCompletionMessageChoicesInner{
+  'role'?: string,
+  'content'?: string,
+}
+
+interface CreateChatCompletionResponseChoicesInner{
+  'message'?: CreateChatCompletionMessageChoicesInner,
+  'finish_reason'?: string,
+  'index'?: string,
+}
+
+type CreateChatCompletionResponse = Omit<CreateCompletionResponse, 'choices'> & { choices: Array<CreateChatCompletionResponseChoicesInner> };
+
 function hashcode(str:string|undefined): string|undefined {
   if(str == undefined || str == null) return undefined;
   var hash = 0, i, chr, len;
@@ -167,7 +180,9 @@ export class ChatGPTBot {
     );
   }
 
- async createChatCompletion(req: CreateCompletionRequest): Promise<AxiosResponse<CreateCompletionResponse, any>>{
+
+
+ async createChatCompletion(req: CreateCompletionRequest): Promise<AxiosResponse<CreateChatCompletionResponse, any>>{
   return axios({
     url: 'https://api.openai.com/v1/chat/completions',
     method: 'post',
@@ -191,9 +206,42 @@ export class ChatGPTBot {
   });
  }
 
+ async onChatGPT(text: string, userName?: string): Promise<string> {
+    if(ChatGPTModelConfig.model.startsWith('gpt-4')||ChatGPTModelConfig.model.startsWith('gpt-3.5')){
+      return this.onChatGPT35(text,userName);
+    }else{
+      return this.onChatGPT3(text,userName);
+    }
+ }
+
+ // send question to ChatGPT with OpenAI API and get answer
+ async onChatGPT3(text: string, userName?: string): Promise<string> {
+  const inputMessage = this.applyContext(text);
+  try {
+    // config OpenAI API request body
+    const response = await this.OpenAI.createCompletion({
+      ...ChatGPTModelConfig,
+      prompt: inputMessage,
+      user: hashcode(userName),
+    });
+    // use OpenAI API to get ChatGPT reply message
+    const chatgptReplyMessage = response?.data?.choices[0]?.text?.trim();
+    console.log("🤖️ Chatbot says: ", chatgptReplyMessage);
+    return chatgptReplyMessage;
+  } catch (e: any) {
+    const errorResponse = e?.response;
+    const errorCode = errorResponse?.status;
+    const errorStatus = errorResponse?.statusText;
+    const errorMessage = errorResponse?.data?.error?.message;
+    console.error(`❌ Code ${errorCode}: ${errorStatus}`);
+    console.error(`❌ ${errorMessage}`);
+    return chatgptErrorMessage;
+  }
+}
+
 
   // send question to ChatGPT with OpenAI API and get answer
-  async onChatGPT(text: string, userName?: string): Promise<string> {
+  async onChatGPT35(text: string, userName?: string): Promise<string> {
     const inputMessage = this.applyContext(text);
     try {
       // config OpenAI API request body
@@ -203,12 +251,7 @@ export class ChatGPTBot {
         user: hashcode(userName),
       });
       // use OpenAI API to get ChatGPT reply message
-      const chatgptReplyMessage = response?.data?.choices[0]?.text?.trim();
-      console.log("🤖️ Chatbot says id: ", response?.data?.id);
-      console.log("🤖️ Chatbot says object: ", response?.data?.object);
-      console.log("🤖️ Chatbot says created: ", response?.data?.created);
-      console.log("🤖️ Chatbot says choices0: ", JSON.stringify(response?.data?.choices[0]));
-      console.log("🤖️ Chatbot says: ", chatgptReplyMessage);
+      const chatgptReplyMessage = response?.data?.choices[0]?.message?.content?.trim();
       return chatgptReplyMessage==undefined?"":chatgptReplyMessage;
     } catch (e: any) {
       const errorResponse = e?.response;
