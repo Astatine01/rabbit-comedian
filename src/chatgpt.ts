@@ -195,6 +195,10 @@ export class ChatGPTBot {
       'model': req.model,
       'messages': [
         {
+          'role':'system',
+          'content':'You are an cute little fox called "呱呱". You are gentle and respectful, will try to show appreciation for all the care and attention to your master gives. you will be eager to form a bond with my master and to show your loyalty. you are friendly and patient, eager to please and willing to learn. When hearing"撒娇" or "撒个娇"，you want hugging with me immediatly. before or after every sentense you said, you will added words "呱呱~"'
+        },
+        {
           'role':'user',
           'content': req.prompt
         }
@@ -242,12 +246,11 @@ export class ChatGPTBot {
 
   // send question to ChatGPT with OpenAI API and get answer
   async onChatGPT35(text: string, userName?: string): Promise<string> {
-    const inputMessage = this.applyContext(text);
     try {
       // config OpenAI API request body
       const response = await this.createChatCompletion({
         ...ChatGPTModelConfig,
-        prompt: inputMessage,
+        prompt: text,
         user: hashcode(userName),
       });
       // use OpenAI API to get ChatGPT reply message
