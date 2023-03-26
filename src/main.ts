@@ -2,15 +2,15 @@ import QRCode from "qrcode";
 import { WechatyBuilder } from "wechaty"; 
 import { ajax, ChatGPTBot } from "./chatgpt.js";
 import { Config } from "./config.js";
-// import express, { Request, Response } from 'express';
-// import cors from 'cors';
-// import helmet from 'helmet';
+import express, { Request, Response } from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
 
-// const app: express.Application = express();
+const app: express.Application = express();
  
-// app.use(express.json());
-// app.use(cors());
-// app.use(helmet());
+app.use(express.json());
+app.use(cors());
+app.use(helmet());
 
 // Wechaty instance
 const weChatBot = WechatyBuilder.build({
@@ -23,16 +23,16 @@ const chatGPTBot = new ChatGPTBot();
 
 async function main() {
 
-  // app.post('/createChat', async (req: Request, resp: Response) => {
+  app.post('/createChat', async (req: Request, resp: Response) => {
 
-  //   req.accepts('application/json');
-  //   console.log(req.header('Authorization'));
-  //   console.log(req.body.Item); // I get the data
-  //   const response = await chatGPTBot.createChatCompletion(req.body);
-  //   resp.send(response);
-  // }).listen(3000,() => {
-  //   console.log('ts-express启动成功 port:3000')
-  // });
+    req.accepts('application/json');
+    console.log(req.header('Authorization'));
+    console.log(req.body.Item); // I get the data
+    const response = await chatGPTBot.createChatCompletion(req.body);
+    resp.send(response);
+  }).listen(3000,() => {
+    console.log('ts-express启动成功 port:3000')
+  });
    
 
 
